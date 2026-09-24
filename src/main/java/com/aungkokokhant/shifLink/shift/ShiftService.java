@@ -21,8 +21,13 @@ public class ShiftService {
     private final ShiftRepository shiftRepository;
     private final EmployeeService employeeService;
 
-    public List<ShiftResponse> findAll() {
-        return shiftRepository.findAll()
+    @Transactional(readOnly = true)
+    public List<ShiftResponse> findAll() { return shiftRepository.findAll().stream().map(this::toResponse).toList(); }
+
+    @Transactional(readOnly = true)
+    public List<ShiftResponse> findMyShifts(String employeeCode) {
+        return shiftRepository
+                .findByEmployee_EmployeeCodeOrderByShiftDateAscStartTimeAsc(employeeCode)
                 .stream()
                 .map(this::toResponse)
                 .toList();

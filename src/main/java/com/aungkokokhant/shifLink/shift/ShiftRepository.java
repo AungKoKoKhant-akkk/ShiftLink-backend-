@@ -11,4 +11,8 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             LocalDate startDate,
             LocalDate endDate
     );
+
+    List<Shift> findByEmployee_EmployeeCodeOrderByShiftDateAscStartTimeAsc(
+            String employeeCode
+    );
 }

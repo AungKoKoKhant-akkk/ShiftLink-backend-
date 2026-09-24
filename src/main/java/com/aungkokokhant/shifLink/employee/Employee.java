@@ -32,4 +32,12 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private EmployeeStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", nullable = false, length = 20)
+    @Builder.Default
+    private UserRole role = UserRole.USER;
+
+    @Column(nullable = false)
+    private String password;
 }

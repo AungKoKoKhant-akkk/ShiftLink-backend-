@@ -2,6 +2,7 @@ package com.aungkokokhant.shifLink.employee.dto;
 
 import com.aungkokokhant.shifLink.employee.EmployeeStatus;
 import com.aungkokokhant.shifLink.employee.EmployeeType;
+import com.aungkokokhant.shifLink.employee.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,6 +24,9 @@ public record EmployeeRequest(
         String department,
 
         @NotNull
-        EmployeeStatus status
+        EmployeeStatus status,
+
+        @NotNull
+        UserRole role
 ) {
 }

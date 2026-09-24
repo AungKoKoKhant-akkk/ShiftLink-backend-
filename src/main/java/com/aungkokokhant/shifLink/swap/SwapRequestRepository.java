@@ -13,4 +13,8 @@ public interface SwapRequestRepository
             Long shiftId,
             SwapRequestStatus status
     );
+
+    List<SwapRequest> findByRequesterEmployee_EmployeeCodeOrderByRequestedAtDesc(
+            String employeeCode
+    );
 }

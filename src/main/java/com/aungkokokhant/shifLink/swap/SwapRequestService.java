@@ -1,6 +1,7 @@
 package com.aungkokokhant.shifLink.swap;
 
 import com.aungkokokhant.shifLink.employee.Employee;
+import com.aungkokokhant.shifLink.employee.EmployeeRepository;
 import com.aungkokokhant.shifLink.employee.EmployeeService;
 import com.aungkokokhant.shifLink.employee.EmployeeStatus;
 import com.aungkokokhant.shifLink.shift.Shift;
@@ -24,6 +25,7 @@ public class SwapRequestService {
     private final ShiftRepository shiftRepository;
     private final EmployeeService employeeService;
     private final ShiftService shiftService;
+    private final EmployeeRepository employeeRepository;
 
     @Transactional(readOnly = true)
     public List<SwapRequestResponse> getAll() {
@@ -33,11 +35,35 @@ public class SwapRequestService {
                 .toList();
     }
 
-    public SwapRequestResponse create(CreateSwapRequest request) {
+    @Transactional(readOnly = true)
+    public List<SwapRequestResponse> getMyRequests(String employeeCode) {
+        return swapRequestRepository
+                .findByRequesterEmployee_EmployeeCodeOrderByRequestedAtDesc(employeeCode)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public SwapRequestResponse create(
+            CreateSwapRequest request,
+            String loggedInEmployeeCode
+    ) {
         Shift shift = shiftRepository.findById(request.shiftId())
                 .orElseThrow(() ->
                         new IllegalArgumentException("Shift not found.")
                 );
+
+        Employee loggedInEmployee = employeeRepository
+                .findByEmployeeCode(loggedInEmployeeCode)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Logged-in employee not found.")
+                );
+
+        if (!shift.getEmployee().getId().equals(loggedInEmployee.getId())) {
+            throw new IllegalArgumentException(
+                    "You can request a swap only for your own shift."
+            );
+        }
 
         boolean alreadyPending =
                 swapRequestRepository.existsByShift_IdAndStatus(
@@ -53,7 +79,7 @@ public class SwapRequestService {
 
         SwapRequest swapRequest = new SwapRequest();
         swapRequest.setShift(shift);
-        swapRequest.setRequesterEmployee(shift.getEmployee());
+        swapRequest.setRequesterEmployee(loggedInEmployee);
         swapRequest.setReason(request.reason().trim());
 
         return toResponse(swapRequestRepository.save(swapRequest));

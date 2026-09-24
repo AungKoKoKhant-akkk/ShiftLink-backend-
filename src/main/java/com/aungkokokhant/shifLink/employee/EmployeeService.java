@@ -30,14 +30,23 @@ public class EmployeeService {
 
         }
 
-        Employee employee = new Employee(
-                null,
-                request.employeeCode(),
-                request.name(),
-                request.type(),
-                request.department(),
-                EmployeeStatus.ACTIVE
-        );
+//        Employee employee = new Employee(
+//                null,
+//                request.employeeCode(),
+//                request.name(),
+//                request.type(),
+//                request.department(),
+//                EmployeeStatus.ACTIVE
+//        );
+
+        Employee employee = Employee.builder()
+                .employeeCode(request.employeeCode())
+                .name(request.name())
+                .type(request.type())
+                .department(request.department())
+                .status(request.status())
+                .role(request.role())
+                .build();
         return employeeRepository.save(employee);
     }
 
@@ -54,6 +63,7 @@ public class EmployeeService {
         employee.setType(request.type());
         employee.setDepartment(request.department());
         employee.setStatus(request.status());
+        employee.setRole(request.role());
         return employee;
     }
 
