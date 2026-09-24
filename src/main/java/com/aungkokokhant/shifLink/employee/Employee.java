@@ -1,5 +1,6 @@
 package com.aungkokokhant.shifLink.employee;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,6 +39,7 @@ public class Employee {
     @Builder.Default
     private UserRole role = UserRole.USER;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 }

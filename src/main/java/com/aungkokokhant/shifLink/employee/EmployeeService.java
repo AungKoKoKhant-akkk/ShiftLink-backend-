@@ -4,6 +4,7 @@ import com.aungkokokhant.shifLink.employee.dto.EmployeeRequest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<Employee> findAll(){
         return employeeRepository.findAll();
@@ -39,6 +41,10 @@ public class EmployeeService {
 //                EmployeeStatus.ACTIVE
 //        );
 
+        if (request.password() == null || request.password().isBlank()) {
+            throw new IllegalArgumentException("An initial password is required for a new employee");
+        }
+
         Employee employee = Employee.builder()
                 .employeeCode(request.employeeCode())
                 .name(request.name())
@@ -46,6 +52,7 @@ public class EmployeeService {
                 .department(request.department())
                 .status(request.status())
                 .role(request.role())
+                .password(passwordEncoder.encode(request.password()))
                 .build();
         return employeeRepository.save(employee);
     }
@@ -64,6 +71,9 @@ public class EmployeeService {
         employee.setDepartment(request.department());
         employee.setStatus(request.status());
         employee.setRole(request.role());
+        if (request.password() != null && !request.password().isBlank()) {
+            employee.setPassword(passwordEncoder.encode(request.password()));
+        }
         return employee;
     }
 

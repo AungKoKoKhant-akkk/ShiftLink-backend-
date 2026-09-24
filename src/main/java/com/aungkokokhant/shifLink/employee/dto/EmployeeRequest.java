@@ -27,6 +27,9 @@ public record EmployeeRequest(
         EmployeeStatus status,
 
         @NotNull
-        UserRole role
+        UserRole role,
+
+        @Size(max = 72)
+        String password
 ) {
 }
