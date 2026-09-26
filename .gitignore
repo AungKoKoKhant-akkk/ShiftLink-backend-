@@ -4,6 +4,9 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.neon/local
+node_modules
+.env.local
 
 ### STS ###
 .apt_generated
