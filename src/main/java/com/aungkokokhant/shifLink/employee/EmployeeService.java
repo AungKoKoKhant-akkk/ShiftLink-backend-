@@ -36,6 +36,13 @@ public class EmployeeService {
 
     @Transactional
     public Employee create(EmployeeRequest request) {
+        if (demoMode && request.role() == UserRole.ADMIN) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Admin accounts cannot be created in demo mode"
+            );
+        }
+
         if (employeeRepository.existsByEmployeeCode(request.employeeCode())) {
             throw new IllegalArgumentException(
                     "Employee with code " + request.employeeCode() + " already exists"
@@ -65,6 +72,15 @@ public class EmployeeService {
     public Employee update(EmployeeRequest request, Long id) {
         Employee employee = findById(id);
         protectDemoAccount(employee);
+
+        if (demoMode
+                && employee.getRole() != UserRole.ADMIN
+                && request.role() == UserRole.ADMIN) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Employees cannot be promoted to ADMIN in demo mode"
+            );
+        }
 
         if (!employee.getEmployeeCode().equals(request.employeeCode())
                 && employeeRepository.existsByEmployeeCode(request.employeeCode())) {
